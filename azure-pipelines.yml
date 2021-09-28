@@ -1,9 +1,12 @@
-trigger: none
+trigger: 
+- 'main'
 
 variables:
   buildConfiguration: 'Release'
+  leaderboardRepository: 'leaderboard'
   webRepository: 'web'
   tag: '$(Build.BuildId)'
+  imagePullSecret: 'secret'
 
 stages:
 - stage: 'Build'
@@ -24,6 +27,17 @@ stages:
         containerRegistry: 'Container Registry Connection'
         tags: |
           $(tag)
+
+    - task: Docker@2
+      displayName: 'Build and push the leaderboard image to container registry'
+      inputs:
+       command: buildAndPush
+       buildContext: $(Build.Repository.LocalPath)
+       repository: $(leaderboardRepository)
+       dockerfile: '$(Build.SourcesDirectory)/Tailspin.SpaceGame.LeaderboardContainer/Dockerfile'
+       containerRegistry: 'Container Registry Connection'
+       tags: |
+         $(tag)
 
 - stage: 'Deploy'
   displayName: 'Deploy the container'
