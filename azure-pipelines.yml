@@ -53,10 +53,7 @@ stages:
       environment: 'spike.default'
     variables:
     - group: Release
-    strategy:
-      runOnce:
-        deploy:
-
+    
     steps:
     - download: current
       artifact: manifests
